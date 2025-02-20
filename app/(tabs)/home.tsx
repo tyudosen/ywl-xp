@@ -1,74 +1,177 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { StyleSheet, FlatList, TouchableOpacity, Image } from "react-native";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedSafeAreaView } from "@/components/ThemeSafeAreaView";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { formatDistanceToNow } from "date-fns";
+import { useState } from "react";
+import { router } from "expo-router";
 
 export default function HomeScreen() {
+  const [isOrderDetailsVisible, setIsOrderDetailsVisible] = useState([
+    { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false },
+  ]);
+  const primaryTextColor = useThemeColor({}, "text");
+  const secondaryTextColor = useThemeColor({}, "secondary");
+  const borderColor = useThemeColor({}, "border");
+  const backgroundColor = useThemeColor({}, "background");
+  const cardColor = useThemeColor({}, "card");
+  const ordersData = [
+    {
+      id: "1",
+      orderNumber: "Order 1",
+      orderDate: "2024-01-01",
+      orderStatus: "Pending",
+    },
+    {
+      id: "2",
+      orderNumber: "Order 2",
+      orderDate: "2024-01-02",
+      orderStatus: "Completed",
+    },
+    {
+      id: "3",
+      orderNumber: "Order 3",
+      orderDate: "2024-01-03",
+      orderStatus: "Cancelled",
+    },
+    {
+      id: "4",
+      orderNumber: "Order 4",
+      orderDate: "2024-01-04",
+      orderStatus: "Pending",
+    },
+    {
+      id: "5",
+      orderNumber: "Order 5",
+      orderDate: "2024-01-05",
+      orderStatus: "Completed",
+    },
+  ];
+
+  const renderOrderItem = ({ item, index }) => (
+    <TouchableOpacity
+    className="flex-col mb-4"
+    onPress={() =>
+      setIsOrderDetailsVisible({
+        ...isOrderDetailsVisible,
+        [index]: !isOrderDetailsVisible[index],
+      })
+    }
+  >
+    <ThemedView
+      style={[
+        {
+          borderColor,
+          backgroundColor: cardColor,
+          borderBottomLeftRadius: isOrderDetailsVisible[index]
+            ? 0
+            : 16,
+          borderBottomRightRadius: isOrderDetailsVisible[index]
+            ? 0
+            : 16,
+        },
+      ]}
+      className="border-2 p-4 flex-row items-center justify-between rounded-t-2xl"
+    >
+      <ThemedText>{item.orderNumber}</ThemedText>
+      <ThemedText>
+        {formatDistanceToNow(new Date(item.orderDate), {
+          addSuffix: true,
+        })}
+      </ThemedText>
+      <ThemedText>{item.orderStatus}</ThemedText>
+    </ThemedView>
+
+    {isOrderDetailsVisible[index] && (
+      <ThemedView
+        style={[{ borderColor, backgroundColor: cardColor }]}
+        className="w-full border-2 overflow-hidden"
+      >
+        <ThemedText className="text-center p-4">
+          Order Details
+        </ThemedText>
+        <ThemedView
+          style={{ backgroundColor: cardColor }}
+          className="space-y-2 px-4"
+        >
+          <ThemedView
+            style={{ backgroundColor: cardColor }}
+            className="flex-row items-center justify-between pb-4"
+          >
+            <ThemedText>Service(s):</ThemedText>
+            <ThemedText>Development, Scanning, Printing</ThemedText>
+          </ThemedView>
+          <ThemedView
+            style={{ backgroundColor: cardColor }}
+            className="flex-row items-center justify-between pb-4"
+          >
+            <ThemedText>Number of rolls:</ThemedText>
+            <ThemedText>1</ThemedText>
+          </ThemedView>
+          <ThemedView
+            style={{ backgroundColor: cardColor }}
+            className="flex-row items-center justify-between pb-4"
+          >
+            <ThemedText>Total amount:</ThemedText>
+            <ThemedText>$100</ThemedText>
+          </ThemedView>
+        </ThemedView>
+      </ThemedView>
+    )}
+  </TouchableOpacity>  );
+
+  const ListHeader = () => (
+    <ThemedView>
+      <ThemedView className="my-6 px-4 space-y-6">
+        <ThemedView className="flex-row items-center justify-between">
+          <ThemedView>
+            <ThemedText style={{ color: primaryTextColor }} type="title">
+              Hi Marco
+            </ThemedText>
+            <ThemedText style={{ color: secondaryTextColor }} type="subtitle">
+              welcome back
+            </ThemedText>
+          </ThemedView>
+
+          <ThemedView>
+            <Image 
+              source={require("@/assets/images/logo.png")}
+              className="w-[100px] h-[100px] rounded-full bg-white"
+            />
+          </ThemedView>
+        </ThemedView>
+        <ThemedView className="flex-row items-center justify-between pt-5 pb-4">
+          <ThemedText type="subtitle">Your recent orders</ThemedText>
+          <TouchableOpacity onPress={() => router.push("/orders")}>
+            <ThemedText type="link">View all</ThemedText>
+          </TouchableOpacity>
+        </ThemedView>
+      </ThemedView>
+    </ThemedView>
+  );
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <ThemedSafeAreaView className="flex-1">
+      <ThemedView style={[styles.container, { backgroundColor }]}>
+        <FlatList
+          data={ordersData}
+          keyExtractor={(item) => item.id}
+          renderItem={renderOrderItem}
+          ListHeaderComponent={ListHeader}
+          contentContainerStyle={styles.flatListContent}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    </ThemedSafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  flatListContent: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
   },
 });

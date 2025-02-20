@@ -15,6 +15,7 @@ const MAPPING = {
   'chevron.right': 'chevron-right',
   'plus.circle.fill': 'add-circle',
   'list.bullet': 'list',
+  'eye.fill': 'remove-red-eye',
 } as Partial<
   Record<
     import('expo-symbols').SymbolViewProps['name'],

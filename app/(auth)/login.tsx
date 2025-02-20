@@ -14,7 +14,12 @@ import { useForm, Controller } from "react-hook-form";
 import ThemedButton from "@/components/ThemedButton";
 import logo from "@/assets/images/logo-transp.png";
 import FormField from "@/components/FormField";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { router } from "expo-router";
+
 const LoginScreen = () => {
+  const textColor = useThemeColor({}, "text");
+  const accentColor = useThemeColor({}, "accent");
   
   const {
     control,
@@ -26,12 +31,19 @@ const LoginScreen = () => {
       password: "",
     },
   });
-  const onSubmit = (data: any) => console.log(data);
+  const onSubmit = (data: any) => {
+    console.log(data);
+    // TODO: Add login logic
+
+    router.push("/home");
+  }
+
+
 
   return (
     <ThemedSafeAreaView className="h-full">
       <ScrollView>
-        <ThemedView className="px-4 my-6 w-full h-full justify-center">
+        <ThemedView className="px-4 my-6 w-full min-h-[85vh] justify-center">
           <Image
             className="w-[80px] h-[80px] rounded-full bg-white"
             source={logo}
@@ -49,6 +61,7 @@ const LoginScreen = () => {
               <FormField
                 label="Email"
                 value={value}
+                keyboardType="email-address"
                 onChangeText={onChange}
                 onBlur={onBlur}
                 containerStyle="mt-7"
@@ -77,7 +90,12 @@ const LoginScreen = () => {
           />
           {errors.password && <ThemedText>This is required.</ThemedText>}
 
-          <ThemedButton title="Submit" handlePress={handleSubmit(onSubmit)} />
+          <ThemedButton title="Submit" handlePress={handleSubmit(onSubmit)} style={{ }} />
+
+          <View className="flex-row items-center justify-center mt-7">
+            <ThemedText>Dont have an account ? </ThemedText>
+            <ThemedText style={[{ color: accentColor }]}>Sign up</ThemedText>
+          </View>
         </ThemedView>
       </ScrollView>
     </ThemedSafeAreaView>
