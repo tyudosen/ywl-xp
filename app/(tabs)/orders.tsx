@@ -15,6 +15,7 @@ import { ThemedSafeAreaView } from "@/components/ThemeSafeAreaView";
 import { router } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { formatDistanceToNow } from "date-fns";
+import { LogoImage } from "@/constants/Constants";
 
 const OrdersScreen = () => {
   const [isOrderDetailsVisible, setIsOrderDetailsVisible] = useState([
@@ -39,7 +40,7 @@ const OrdersScreen = () => {
 
           <ThemedView>
             <Image
-              source={require("@/assets/images/logo.png")}
+              source={LogoImage}
               className="w-[100px] h-[100px] rounded-full bg-white"
             />
           </ThemedView>
